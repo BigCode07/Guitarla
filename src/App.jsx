@@ -9,27 +9,45 @@ function App() {
   const [data, setData] = useState([]);
   const [cart, setCart] = useState([]);
 
-  const addToCart = (item) => {
-
-    setCart(prevCart => [...prevCart,item]);
-  };
-
-  cart.push(guitar)
-
   useEffect(() => {
     setData(db);
   }, []);
 
+  const addToCart = (item) => {
+    const itemExists = cart.findIndex((guitar) => guitar.id === item.id);
+    if (itemExists >= 0) {
+      const updateCart = [...cart];
+      updateCart[itemExists].quantity++;
+      setCart(updateCart);
+    } else {
+      item.quantity = 1;
+      setCart([...cart, item]);
+    }
+  };
+
+  const removeFromCart = (id) => {
+    setCart((prevCart) => prevCart.filter(guitar => guitar.id !== id));
+  };
+
+  const  increaseQuantity =(id)=>{
+    console.log('Incrementando',id);
+  }
+
   return (
     <>
-      <Header />
+      <Header cart={cart} removeFromCart={removeFromCart} increaseQuantity={increaseQuantity} />
 
       <main className="container-xl mt-5">
         <h2 className="text-center">Nuestra Colección</h2>
 
         <div className="row mt-5">
           {data.map((guitar) => (
-            <Guitar key={guitar.id} guitar={guitar} setCart={setCart}addToCart={addToCart} />
+            <Guitar
+              key={guitar.id}
+              guitar={guitar}
+              setCart={setCart}
+              addToCart={addToCart}
+            />
           ))}
         </div>
       </main>
